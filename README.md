@@ -1,5 +1,4 @@
-
-# Milch Price Forecasting Model
+# Milk Price Forecasting Model
 
 The Milk Price Forecasting Model is a pilot project of the Federal
 Office for Agriculture. It is implemented in an R script. It integrates
