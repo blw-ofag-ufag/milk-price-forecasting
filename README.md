@@ -231,11 +231,13 @@ square of the coefficient magnitudes. On the other side, Lasso
 Regression employs an $\ell_1$-penalty, encouraging sparser solutions –
 only a few predictors are selected.
 
-<span
-id="eq-ridge">$$\boldsymbol {\hat \beta}_{\text{ridge}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_2^2 + \lambda \| \boldsymbol \beta\|_2^2 \right\} \qquad(3)$$</span>
+<span id="eq-ridge">
+$$\boldsymbol {\hat \beta}_{\text{ridge}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_2^2 + \lambda \| \boldsymbol \beta\|_2^2 \right\}$$
+</span>
 
-<span
-id="eq-ridge">$$\boldsymbol {\hat \beta}_{\text{lasso}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_1 + \lambda \| \boldsymbol \beta\|_2^2 \right\} \qquad(4)$$</span>
+<span id="eq-ridge">
+$$\boldsymbol {\hat \beta}_{\text{lasso}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_1 + \lambda \| \boldsymbol \beta\|_2^2 \right\}$$
+</span>
 
 The mathematical formulations for these regressions are centered around
 minimizing the sum of squared residuals, with added regularization terms
