@@ -94,7 +94,7 @@ aria-hidden="true"><code>time-series-decomposition.pdf</code></figcaption>
 </tbody>
 </table>
 
-Figure 1: Overview of the different files written by the R script
+Figure 1: Overview of the different files written by the R script
 `script.R`.
 
 </div>
@@ -127,8 +127,8 @@ every single variable in the data, so long seasonal effects are detected
 
 <figure>
 <img src="images/decomposition.png" id="fig-seasonal"
-alt="Figure 2: Example of a seasonal decomposition plot for CH_Milchpreis. The milk price is decomposed into a trend (via a moving average), a seasonal effect and the remainder. The bars on the right indicate the relative magnitude of the effects." />
-<figcaption aria-hidden="true">Figure 2: Example of a seasonal
+alt="Figure 2: Example of a seasonal decomposition plot for CH_Milchpreis. The milk price is decomposed into a trend (via a moving average), a seasonal effect and the remainder. The bars on the right indicate the relative magnitude of the effects." />
+<figcaption aria-hidden="true">Figure 2: Example of a seasonal
 decomposition plot for <code>CH_Milchpreis</code>. The milk price is
 decomposed into a trend (via a moving average), a seasonal effect and
 the remainder. The bars on the right indicate the relative magnitude of
@@ -175,29 +175,40 @@ to test the model.
 
 ### Forecasting with lasso and ridge regression
 
-Generally speaking, any forecasting model $f$ predicts a future value of
-$X$, say $X_{t+1}$, based on a past value $X_t$. Autoregressive models
-predict following values based on the predictions already made
+Generally speaking, any forecasting model
+![f](https://latex.codecogs.com/svg.latex?f "f") predicts a future value
+of ![X](https://latex.codecogs.com/svg.latex?X "X"), say
+![X\_{t+1}](https://latex.codecogs.com/svg.latex?X_%7Bt%2B1%7D "X_{t+1}"),
+based on a past value
+![X_t](https://latex.codecogs.com/svg.latex?X_t "X_t"). Autoregressive
+models predict following values based on the predictions already made
 recursively. For the ridge and lasso regression models, this is not
 possible: They only predict the Swiss milk price (denoted as
-$X_{1,t+h}$), while needing many other values
-([Equation 1](#eq-forecasting)). This means, after one round of
-predicting, these other values are missing for continueing
-autoregressively.
+![X\_{1,t+h}](https://latex.codecogs.com/svg.latex?X_%7B1%2Ct%2Bh%7D "X_{1,t+h}")),
+while needing many other values ([Equation 1](#eq-forecasting)). This
+means, after one round of predicting, these other values are missing for
+continueing autoregressively.
 
-<span id="eq-forecasting">$$
-f: X_{1,t+h} = \beta_0 + \sum_{i=1}^p \beta_i X_{i,t}
- \qquad(1)$$</span>
+<span id="eq-forecasting">
+
+![f: X\_{1,t+h} = \beta_0 + \sum\_{i=1}^p \beta_i X\_{i,t}
+ \qquad(1)](https://latex.codecogs.com/svg.latex?f%3A%20X_%7B1%2Ct%2Bh%7D%20%3D%20%5Cbeta_0%20%2B%20%5Csum_%7Bi%3D1%7D%5Ep%20%5Cbeta_i%20X_%7Bi%2Ct%7D%0A%20%5Cqquad%281%29 "f: X_{1,t+h} = \beta_0 + \sum_{i=1}^p \beta_i X_{i,t}
+ \qquad(1)")
+
+</span>
 
 For the purpose of predicting milk prices more than one month into the
 future, three different models are trained – each with a different
-forecast horizons $h$. Consequently, three instances per model can be
-compared with each other in the end.
+forecast horizons ![h](https://latex.codecogs.com/svg.latex?h "h").
+Consequently, three instances per model can be compared with each other
+in the end.
 
-The hyperparameter $\lambda$ which is penalizing large coefficients, is
-selected via cross-validation with the function `cv.glmnet` from the
-`glmnet` package. In order to prevent overfitting, the folds are chosen
-as six-month batches instead of randomly.
+The hyperparameter
+![\lambda](https://latex.codecogs.com/svg.latex?%5Clambda "\lambda")
+which is penalizing large coefficients, is selected via cross-validation
+with the function `cv.glmnet` from the `glmnet` package. In order to
+prevent overfitting, the folds are chosen as six-month batches instead
+of randomly.
 
 ### Forcasting with (seasonal) ARIMA
 
@@ -219,29 +230,50 @@ average (ARIMA) model, both with and without seasonal effects.
 
 Ridge and Lasso regression are especially effective in handling
 multicollinearity and preventing overfitting. Both models are linear in
-nature, i.e. the response variable $\mathbf y$ can be expressed as a
-linear combination of predictors $\mathbf X \boldsymbol \beta$ plus some
-residual $\boldsymbol \varepsilon$.
+nature, i.e. the response variable
+![\mathbf y](https://latex.codecogs.com/svg.latex?%5Cmathbf%20y "\mathbf y")
+can be expressed as a linear combination of predictors
+![\mathbf X \boldsymbol \beta](https://latex.codecogs.com/svg.latex?%5Cmathbf%20X%20%5Cboldsymbol%20%5Cbeta "\mathbf X \boldsymbol \beta")
+plus some residual
+![\boldsymbol \varepsilon](https://latex.codecogs.com/svg.latex?%5Cboldsymbol%20%5Cvarepsilon "\boldsymbol \varepsilon").
 
-<span
-id="eq-linear">$$\mathbf y = \mathbf X \boldsymbol \beta + \boldsymbol \varepsilon \qquad(2)$$</span>
+<span id="eq-linear">
 
-Ridge Regression introduces an $\ell_2$-penalty proportional to the
-square of the coefficient magnitudes. On the other side, Lasso
-Regression employs an $\ell_1$-penalty, encouraging sparser solutions –
-only a few predictors are selected.
+![\mathbf y = \mathbf X \boldsymbol \beta + \boldsymbol \varepsilon
+ \qquad(2)](https://latex.codecogs.com/svg.latex?%5Cmathbf%20y%20%3D%20%5Cmathbf%20X%20%5Cboldsymbol%20%5Cbeta%20%2B%20%5Cboldsymbol%20%5Cvarepsilon%0A%20%5Cqquad%282%29 "\mathbf y = \mathbf X \boldsymbol \beta + \boldsymbol \varepsilon
+ \qquad(2)")
+
+</span>
+
+Ridge Regression introduces an
+![\ell_2](https://latex.codecogs.com/svg.latex?%5Cell_2 "\ell_2")-penalty
+proportional to the square of the coefficient magnitudes. On the other
+side, Lasso Regression employs an
+![\ell_1](https://latex.codecogs.com/svg.latex?%5Cell_1 "\ell_1")-penalty,
+encouraging sparser solutions – only a few predictors are selected.
 
 <span id="eq-ridge">
-$$\boldsymbol {\hat \beta}_{\text{ridge}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_2^2 + \lambda \| \boldsymbol \beta\|_2^2 \right\}$$
+
+![\boldsymbol {\hat \beta}\_{\text{ridge}} = \min\_{\boldsymbol \beta} \left\\{ \\\| \mathbf y - \mathbf X \boldsymbol \beta \\\|\_2^2 + \lambda \\\| \boldsymbol \beta\\\|\_2^2 \right\\}
+ \qquad(3)](https://latex.codecogs.com/svg.latex?%5Cboldsymbol%20%7B%5Chat%20%5Cbeta%7D_%7B%5Ctext%7Bridge%7D%7D%20%3D%20%5Cmin_%7B%5Cboldsymbol%20%5Cbeta%7D%20%5Cleft%5C%7B%20%5C%7C%20%5Cmathbf%20y%20-%20%5Cmathbf%20X%20%5Cboldsymbol%20%5Cbeta%20%5C%7C_2%5E2%20%2B%20%5Clambda%20%5C%7C%20%5Cboldsymbol%20%5Cbeta%5C%7C_2%5E2%20%5Cright%5C%7D%0A%20%5Cqquad%283%29 "\boldsymbol {\hat \beta}_{\text{ridge}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_2^2 + \lambda \| \boldsymbol \beta\|_2^2 \right\}
+ \qquad(3)")
+
 </span>
 
 <span id="eq-ridge">
-$$\boldsymbol {\hat \beta}_{\text{lasso}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_1 + \lambda \| \boldsymbol \beta\|_2^2 \right\}$$
+
+![\boldsymbol {\hat \beta}\_{\text{lasso}} = \min\_{\boldsymbol \beta} \left\\{ \\\| \mathbf y - \mathbf X \boldsymbol \beta \\\|\_1 + \lambda \\\| \boldsymbol \beta\\\|\_2^2 \right\\}
+ \qquad(4)](https://latex.codecogs.com/svg.latex?%5Cboldsymbol%20%7B%5Chat%20%5Cbeta%7D_%7B%5Ctext%7Blasso%7D%7D%20%3D%20%5Cmin_%7B%5Cboldsymbol%20%5Cbeta%7D%20%5Cleft%5C%7B%20%5C%7C%20%5Cmathbf%20y%20-%20%5Cmathbf%20X%20%5Cboldsymbol%20%5Cbeta%20%5C%7C_1%20%2B%20%5Clambda%20%5C%7C%20%5Cboldsymbol%20%5Cbeta%5C%7C_2%5E2%20%5Cright%5C%7D%0A%20%5Cqquad%284%29 "\boldsymbol {\hat \beta}_{\text{lasso}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_1 + \lambda \| \boldsymbol \beta\|_2^2 \right\}
+ \qquad(4)")
+
 </span>
 
 The mathematical formulations for these regressions are centered around
 minimizing the sum of squared residuals, with added regularization terms
-($\ell_2$-norm for Ridge and $\ell_1$-norm for Lasso).
+(![\ell_2](https://latex.codecogs.com/svg.latex?%5Cell_2 "\ell_2")-norm
+for Ridge and
+![\ell_1](https://latex.codecogs.com/svg.latex?%5Cell_1 "\ell_1")-norm
+for Lasso).
 
 ## Autoregressive Integrated Moving Average
 
