@@ -6,7 +6,7 @@
 
 
 #===============================================================================================================
-# Setting up work space
+# Setting up the work space
 #===============================================================================================================
 
 # user inputs
@@ -18,7 +18,7 @@ target <- "CH_Milchpreis"
 # how many months of the data set should be used for the test set?
 test_set_size <- 18
 
-# define feature names
+# define feature names (all of these features are used to predict `target` using machine learning)
 features <- c("TotMilch_Menge_inkl_LI", "CH_Milchpreis", "Molkerei_Milchpreis",
               "Verkaest_Milchpreis", "Gewerblich_Milchpreis", "Bio_Milchpreis",
               "EU_Milchpreis_CHF", "Kurs_CHF_Euro", "Total_Staatlich_Zahlung",
@@ -28,26 +28,24 @@ features <- c("TotMilch_Menge_inkl_LI", "CH_Milchpreis", "Molkerei_Milchpreis",
               "Vollmilchpulver_Prod_Menge", "Butter_Prod_Menge",
               "Export_Menge_Käse_und_Quark_kg", "Milchpreis_NZ_Euro")
 
-# conditional installation of packages
+# conditional installation of packages (if allready installed, just add package to search path)
 for (package in c("forecast", "ggplot2", "tidyr", "GGally", "tibble", "magrittr", "readxl", "visdat", "seastests", "ggcorrplot", "openxlsx", "glmnet")) {
   if(!do.call(require,list(package))) install.packages(package)
   do.call(library,list(package))
 }
 
-# Forecasting using Ridge Regression
+# print out an introductory message in the console
 cat("\f\nFederal Office of Agriculture (2023)\n___  ____ _ _     ______     _           ______                           _   _             \n|  \\/  (_) | |    | ___ \\   (_)          |  ___|                         | | (_)            \n| .  . |_| | | _  | |_/ / __ _  ___ ___  | |_ ___  _ __ ___  ___ __ _ ___| |_ _ _ __   __ _ \n| |\\/| | | | |/ / |  __/ '__| |/ __/ _ \\ |  _/ _ \\| '__/ _ \\/ __/ _` / __| __| | '_ \\ / _` |\n| |  | | | |   <  | |  | |  | | (_|  __/ | || (_) | | |  __/ (_| (_| \\__ \\ |_| | | | | (_| |\n\\_|  |_/_|_|_|\\_\\ |_|  |_|  |_|\\___\\___  |_| \\___/|_|  \\___|\\___\\__,_|___/\\__|_|_| |_|\\__, |\n                                                                                       __/ |\n                                                                                      |___/\n")
 
-# read the data
-data <- file.path("data", name_of_the_data) |>
+# read the data from the excel file directly
+data <- name_of_the_data |>
   readxl::read_excel() |>
   as.data.frame() |>
   subset(select = features)
-data_scaled <- scale(data)
 data_ts <- ts(data, start = 2000, frequency = 12)
 
-
 #===============================================================================================================
-# Decomposing trend, seasonal effects and errors from every feature
+# Exploratory data analysis
 #===============================================================================================================
 
 # function to convert a decomposed time series object to a data frame
@@ -60,27 +58,27 @@ ts2df <- function(x) {
              remainder = d$random)
 }
 
-# conditional creation of folder
-if(!file.exists(file.path(getwd(),"reports"))) dir.create(file.path(getwd(),"reports"))
-if(!file.exists(file.path(getwd(),"tables"))) dir.create(file.path(getwd(),"tables"))
+# conditional creation of the output folder
+if(!file.exists(file.path(getwd(),"output"))) dir.create(file.path(getwd(),"output"))
 
 # create empty pdf
-pdf(file.path(getwd(),"reports","time-series-decomposition.pdf"), width = 16, height = 9)
+pdf(file.path(getwd(),"output","time-series-decomposition.pdf"), width = 16, height = 9)
 
 # title slide
 plot.new()
 text(0, 1, paste("This PDF contains results from an automated time-series analysis report."), pos = 4, xpd = NA)
-text(0, 0.95, Sys.time(), pos = 4, xpd = NA)
-text(0, 0.9, version$version.string, pos = 4, xpd = NA)
+text(0, 0.95, "Find more detailed information on https://github.com/blw-ofag-ufag/milk-price-forecasting", pos = 4, xpd = NA)
+text(0, 0.9, Sys.time(), pos = 4, xpd = NA)
+text(0, 0.85, version$version.string, pos = 4, xpd = NA)
 
 # missing values
 data_ts |> as.data.frame() |> visdat::vis_miss() |> print()
 
 # correlation plot
 data_ts |> cor(use = "complete.obs") |> ggcorrplot::ggcorrplot(method = "circle", type = "lower", outline.color = par()$fg, lab_size = 2, lab = TRUE) |> print()
-write.table(x = cor(data_ts, use = "complete.obs"), file = file.path("tables","correlations.csv"), sep = ";")
+write.table(x = cor(data_ts, use = "complete.obs"), file = file.path("output","correlations.csv"), sep = ";")
 
-# decomposition plots
+# seasonal decomposition of the time series data
 for (i in 1:length(features)) {
   cat("\rDecomposing time series [", i, "/", length(features),"]", sep = "")
   if(!seastests:::isSeasonal(data_ts[,features[i]])) {
@@ -96,10 +94,10 @@ for (i in 1:length(features)) {
 # close pdf
 dev.off()
 
-# Write all the results into one excel sheet
+# write all the results into one excel sheet
 list <- lapply(features, function(i) ts2df(data_ts[,i]))
 names(list) <- features
-write.xlsx(list, file = file.path("tables","decomposition.xlsx"))
+write.xlsx(list, file = file.path("output","decomposition.xlsx"))
 
 #===============================================================================================================
 # Prepare data for forecasting
@@ -215,7 +213,7 @@ predictions_y3 <- cbind(predictions_y3, ARIMA = predictions_arima[,3], SARIMA = 
 # Combine all forecastings (with unseen observations to compare)
 t <- max(df[,"time"]) + c(1/12, 2/12, 3/12)
 forecastings <- rescale(rbind(tail(predictions_y1, 1), tail(predictions_y2, 1), tail(predictions_y3, 1)))
-write.xlsx(data.frame(Year = t%/%1, Month = t%%1*12+1, forecastings), file = file.path("tables","predictions.xlsx"))
+write.xlsx(data.frame(Year = t%/%1, Month = t%%1*12+1, forecastings), file = file.path("output","predictions.xlsx"))
 
 
 ##===============================================================================================================
@@ -246,7 +244,14 @@ overall_comparison <- ggplot(data = RMSE, aes(x = key, y = value, fill = time)) 
 cat("\nGenerate report [1/1]")
 
 # Export all plots as one PDF
-pdf(file.path("reports","machine-learning-report.pdf"), width = 16, height = 9)
+pdf(file.path("output","machine-learning-report.pdf"), width = 16, height = 9)
+
+# title slide
+plot.new()
+text(0, 1, paste("This PDF contains results from an automated machine learning model to forecast `", target, "`.", sep = ""), pos = 4, xpd = NA)
+text(0, 0.95, "Find more detailed information on https://github.com/blw-ofag-ufag/milk-price-forecasting", pos = 4, xpd = NA)
+text(0, 0.9, Sys.time(), pos = 4, xpd = NA)
+text(0, 0.85, version$version.string, pos = 4, xpd = NA)
 
 # Forecast of unseen values
 plot(x = df_test[,"time"], y = rescale(df_test[,target]), xlim = range(df_test[,"time"]) + c(0, 1/2), pch = 16, type = "o", las = 1, lwd = 3, ylab = "Swiss milk price", xlab = "Time")
