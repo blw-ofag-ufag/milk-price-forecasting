@@ -159,3 +159,4 @@ The two models are mainly fit to have a benchmark for the ridge and lasso regres
 
 Both models are fit using the `arima` function from the R package `stats`. In both cases, the order ($p$, $d$, $q$) needs to be specified. $p$ is the moving average order, $d$ the degree of differencing, and $q$ the autoregressive order. In both models, and also the seasonal component, the order is set to $p = 1$, $d = 1$ and $q = 1$.
 
+# References {-}

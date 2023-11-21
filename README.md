@@ -353,6 +353,8 @@ $p$ is the moving average order, $d$ the degree of differencing, and $q$
 the autoregressive order. In both models, and also the seasonal
 component, the order is set to $p = 1$, $d = 1$ and $q = 1$.
 
+# References
+
 <div id="refs" class="references csl-bib-body hanging-indent">
 
 <div id="ref-seastests2021" class="csl-entry">
