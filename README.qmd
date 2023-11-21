@@ -117,7 +117,9 @@ The pairs panel also included in the `machine-learning-report.pdf` file also ill
 
 ![Pair panels of the different model predictions as well as the observed values for a forecasting horizon of h = 1.](resources/pairs.png){#fig-pairs}
 
-For the milk price forecasting, four different models are fit to the data: A lasso regression model, a ridge regression model, an ARIMA model as well as a SARIMA model. These models are briefly described here.
+For the milk price forecasting, four different models are fit to the data: A lasso regression model, a ridge regression model, an ARIMA model as well as a SARIMA model. These models are briefly described here. The file `machine-learning-report.pdf` displays all the forecast values of the Swiss milk price (`CH_Milchpreis`, @fig-forecasting).
+
+![Forecast Swiss milk price for the next three months and each model.](resources/forecasting.png){#fig-forecasting}
 
 ### Forecasting with lasso and ridge regression
 
@@ -135,7 +137,9 @@ $$\mathbf y = \mathbf X \boldsymbol \beta + \boldsymbol \varepsilon$${#eq-linear
 
 Ridge Regression introduces an $\ell_2$-penalty proportional to the square of the coefficient magnitudes. On the other side, Lasso Regression employs an $\ell_1$-penalty, encouraging sparser solutions -- only a few predictors are selected.
 
-$$\boldsymbol {\hat \beta}_{\text{ridge}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_2^2 + \lambda \| \boldsymbol \beta\|_2^2 \right\} \qquad \boldsymbol {\hat \beta}_{\text{lasso}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_1 + \lambda \| \boldsymbol \beta\|_2^2 \right\}$${#eq-beta}
+```math
+\boldsymbol {\hat \beta}_{\text{ridge}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_2^2 + \lambda \| \boldsymbol \beta\|_2^2 \right\} \qquad \boldsymbol {\hat \beta}_{\text{lasso}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_1 + \lambda \| \boldsymbol \beta\|_2^2 \right\}
+```
 
 The mathematical formulations for these regressions are centered around minimizing the sum of squared residuals, with added regularization terms ($\ell_2$-norm for Ridge and $\ell_1$-norm for Lasso).
 
@@ -154,3 +158,4 @@ Additionally, the script employs an autoregressive integrated moving average (AR
 The two models are mainly fit to have a benchmark for the ridge and lasso regressio models.
 
 Both models are fit using the `arima` function from the R package `stats`. In both cases, the order ($p$, $d$, $q$) needs to be specified. $p$ is the moving average order, $d$ the degree of differencing, and $q$ the autoregressive order. In both models, and also the seasonal component, the order is set to $p = 1$, $d = 1$ and $q = 1$.
+

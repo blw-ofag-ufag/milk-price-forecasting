@@ -254,15 +254,18 @@ text(0, 0.9, Sys.time(), pos = 4, xpd = NA)
 text(0, 0.85, version$version.string, pos = 4, xpd = NA)
 
 # Forecast of unseen values
-plot(x = df_test[,"time"], y = rescale(df_test[,target]), xlim = range(df_test[,"time"]) + c(0, 1/2), pch = 16, type = "o", las = 1, lwd = 3, ylab = "Swiss milk price", xlab = "Time")
-points(y = tail(predictions_y1,1), x = rep(max(df_test[,"time"]),ncol(predictions_y1)))
-grid(col=1, lty = 1)
+plot(x = df_test[,"time"], y = rescale(df_test[,target]), xlim = range(df_test[,"time"]) + c(0, 1/2), axes = FALSE, pch = 16, type = "o", las = 1, lwd = 3, ylab = "Swiss milk price [CHF/100]", xlab = "Time")
+grid(lty = 1)
+points(x = df_test[,"time"], y = rescale(df_test[,target]), pch = 16)
+lines(x = df_test[,"time"], y = rescale(df_test[,target]), lwd = 2)
 last <- max(df_test[,"time"])
-colors = c(ARIMA = "blue", SARIMA = "blue", Lasso = "red", Ridge = "red")
+colors = c(ARIMA = "#00BFC4", SARIMA = "#00BFC4", Lasso = "#F8766D", Ridge = "#F8766D")
 for (model in colnames(forecastings)) {
   lines(x = max(df_test[,"time"]) + c(1/12, 2/12, 3/12), y = forecastings[,model], lwd = 3, col = colors[model])
   text(x = max(df_test[,"time"]) + 3/12, y = forecastings[3,model], labels = model, col = colors[model], pos = 4)
 }
+axis(1, lwd = NA, cex.axis = 0.8, at = 2000:2050, labels = 2000:2050)
+axis(2, lwd = NA, cex.axis = 0.8, las = 1)
 
 # Model comparison
 print(overall_comparison + theme_minimal())

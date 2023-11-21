@@ -250,7 +250,16 @@ horizon of h = 1.</figcaption>
 
 For the milk price forecasting, four different models are fit to the
 data: A lasso regression model, a ridge regression model, an ARIMA model
-as well as a SARIMA model. These models are briefly described here.
+as well as a SARIMA model. These models are briefly described here. The
+file `machine-learning-report.pdf` displays all the forecast values of
+the Swiss milk price (`CH_Milchpreis`, [Figure 7](#fig-forecasting)).
+
+<figure>
+<img src="resources/forecasting.png" id="fig-forecasting"
+alt="Figure 7: Forecast Swiss milk price for the next three months and each model." />
+<figcaption aria-hidden="true">Figure 7: Forecast Swiss milk price for
+the next three months and each model.</figcaption>
+</figure>
 
 ### Forecasting with lasso and ridge regression
 
@@ -286,8 +295,9 @@ square of the coefficient magnitudes. On the other side, Lasso
 Regression employs an $\ell_1$-penalty, encouraging sparser solutions –
 only a few predictors are selected.
 
-<span
-id="eq-beta">$$\boldsymbol {\hat \beta}_{\text{ridge}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_2^2 + \lambda \| \boldsymbol \beta\|_2^2 \right\} \qquad \boldsymbol {\hat \beta}_{\text{lasso}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_1 + \lambda \| \boldsymbol \beta\|_2^2 \right\} \qquad(4)$$</span>
+``` math
+\boldsymbol {\hat \beta}_{\text{ridge}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_2^2 + \lambda \| \boldsymbol \beta\|_2^2 \right\} \qquad \boldsymbol {\hat \beta}_{\text{lasso}} = \min_{\boldsymbol \beta} \left\{ \| \mathbf y - \mathbf X \boldsymbol \beta \|_1 + \lambda \| \boldsymbol \beta\|_2^2 \right\}
+```
 
 The mathematical formulations for these regressions are centered around
 minimizing the sum of squared residuals, with added regularization terms
@@ -295,21 +305,21 @@ minimizing the sum of squared residuals, with added regularization terms
 
 The hyperparameter $\lambda$ which is penalizing large coefficients, is
 selected via cross-validation with the function `cv.glmnet` from the
-`glmnet` package. [Figure 7](#fig-coefficients) shows the magnitude of
+`glmnet` package. [Figure 8](#fig-coefficients) shows the magnitude of
 the coefficients under $\ell_1$ penalty (lasso regression), and $\ell_2$
 penalty (ridge regression).
 
 <figure>
 <img src="resources/coefficients.png" id="fig-coefficients"
-alt="Figure 7: Visualization of the coefficient magnitude under \ell_1 penalty (lasso regression), and \ell_2 penalty (ridge regression)." />
-<figcaption aria-hidden="true">Figure 7: Visualization of the
+alt="Figure 8: Visualization of the coefficient magnitude under \ell_1 penalty (lasso regression), and \ell_2 penalty (ridge regression)." />
+<figcaption aria-hidden="true">Figure 8: Visualization of the
 coefficient magnitude under <span
 class="math inline">ℓ<sub>1</sub></span> penalty (lasso regression), and
 <span class="math inline">ℓ<sub>2</sub></span> penalty (ridge
 regression).</figcaption>
 </figure>
 
-[Figure 8](#fig-regularization) shows both the cross-validated error as
+[Figure 9](#fig-regularization) shows both the cross-validated error as
 well as the coefficient magnitude as a response to an increasing penalty
 term $\lambda$. As to be seen, lasso regression leads to coefficients
 reaching zero one by one, while they only approach zero (but never reach
@@ -317,8 +327,8 @@ it) with ridge regression.
 
 <figure>
 <img src="resources/regularization.png" id="fig-regularization"
-alt="Figure 8: Cross-validated mean squared error as a response to an increasing penalty term \lambda (top) as well as the magnidude of different coefficients as a response to an increasing penalty term \lambda (bottom)." />
-<figcaption aria-hidden="true">Figure 8: Cross-validated mean squared
+alt="Figure 9: Cross-validated mean squared error as a response to an increasing penalty term \lambda (top) as well as the magnidude of different coefficients as a response to an increasing penalty term \lambda (bottom)." />
+<figcaption aria-hidden="true">Figure 9: Cross-validated mean squared
 error as a response to an increasing penalty term <span
 class="math inline"><em>λ</em></span> (top) as well as the magnidude of
 different coefficients as a response to an increasing penalty term <span
