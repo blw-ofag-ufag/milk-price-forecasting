@@ -1,4 +1,4 @@
-Documentation for the Milk Price Forecasting Model
+Forecasting Swiss Milk Prices with Machine Learning
 ================
 
 The Milk Price Forecasting Model is a pilot project of the Federal
