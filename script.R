@@ -44,6 +44,14 @@ data <- name_of_the_data |>
   subset(select = features)
 data_ts <- ts(data, start = 2000, frequency = 12)
 
+# change the variable `TotMilch_Menge_inkl_LI` from monthly total to daily production
+paste(floor(time(data_ts)),cycle(data_ts),"1",sep="-") |>
+  as.Date() |>
+  lubridate::days_in_month() -> days_in_month
+data[,1] <- data[,1]/days_in_month
+data_ts[,1] <- data_ts[,1]/days_in_month
+
+
 #===============================================================================================================
 # Exploratory data analysis
 #===============================================================================================================
