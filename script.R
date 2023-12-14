@@ -113,6 +113,10 @@ write.xlsx(list, file = file.path("output","decomposition.xlsx"))
 
 cat("\nPreparing data")
 
+# Add dummy variables for each month (to model monthly effects)
+Months <- model.matrix(~ as.factor(cycle(data_ts)) - 1)
+colnames(Months) <- month.name
+
 # sine and cosine transformer
 sinCosTransform <- function(x, frequency = 1) {
   cbind(sin = sin(x * 2 * pi/frequency), cos = cos(x * 2 * pi/frequency))
@@ -133,6 +137,7 @@ lag <- function(x, k = 1, col.names = NA) {
 df <- cbind(lag(data_ts[,target], k = 1:3),
             time = as.numeric(time(data_ts)),
             sinCosTransform(as.numeric(time(data_ts))),
+            Months,
             as.matrix(as.data.frame(data_ts)))
 
 # replace all NA value by zero
@@ -153,8 +158,10 @@ df_test <- tail(df, test_set_size)
 foldid <- (df_train[,"time"] %/% 0.5 - 3999)
 
 # Save all features allowed to predict the model in one vector
-features <- c("sin","cos",features)
+features <- c("sin","cos",month.name,features)
 label <- "y1"
+
+
 
 #===============================================================================================================
 # Forecasting the milk price with lasso and ridge regression
