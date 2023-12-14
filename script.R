@@ -231,7 +231,7 @@ forecastings <- rescale(rbind(tail(predictions_y1, 1), tail(predictions_y2, 1), 
 write.xlsx(data.frame(Year = t%/%1, Month = t%%1*12+1, forecastings), file = file.path("output","predictions.xlsx"))
 
 
-##===============================================================================================================
+#===============================================================================================================
 # Testing all models
 #===============================================================================================================
 
@@ -241,13 +241,14 @@ rmse <- function(predictions, observations) {
   sqrt(colMeans(Errors^2, na.rm = TRUE))
 }
 RMSE <- sapply(1:3, function(i) rmse(get(paste0("predictions_y",i)), df_test[,paste0("y",i)])) |> t()
-RMSE <- data.frame(time = rep(as.character(1:3), times = 4), gather(as.data.frame(RMSE)))
+RMSE <- data.frame(horizon = rep(as.character(1:3), times = 4), gather(as.data.frame(RMSE)))
+RMSE[,"value"] <- RMSE[,"value"] * 0.01 # change from cents to CHF
 
 # make plot of all model performances
-overall_comparison <- ggplot(data = RMSE, aes(x = key, y = value, fill = time)) +
+overall_comparison <- ggplot(data = RMSE, aes(x = key, y = value, fill = horizon)) +
   ylab("Root mean squared error [CHF]") +
   geom_bar(stat = "identity", position=position_dodge()) +
-  geom_text(aes(label = round(value, 2)), color = "black", position = position_dodge(0.9), vjust = -1) +
+  geom_text(aes(label = round(value, 3)), color = "black", position = position_dodge(0.9), vjust = -1) +
   scale_fill_brewer(palette = "Reds") +
   ggtitle("Model performance comparison",paste("This chart shows the root mean squared error (RMSE), which represents the average error, of different models.\nThe models were all tested on the milk price data of the past",test_set_size,"months, but trained without that data."))
 
@@ -285,7 +286,7 @@ axis(2, lwd = NA, cex.axis = 0.8, las = 1)
 # Model comparison
 print(overall_comparison + theme_minimal())
 
-# Pais panel
+# Pairs panel
 for(i in 1:3) {
   cbind(Observation = df_test[,paste0("y",i)], get(paste0("predictions_",paste0("y",i)))) |>
     na.omit() |>
