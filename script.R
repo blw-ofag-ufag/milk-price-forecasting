@@ -4,7 +4,6 @@
 # date: 2023-11-08
 #===============================================================================================================
 
-
 #===============================================================================================================
 # Setting up the work space
 #===============================================================================================================
@@ -29,7 +28,7 @@ features <- c("TotMilch_Menge_inkl_LI", "CH_Milchpreis", "Molkerei_Milchpreis",
               "Export_Menge_Käse_und_Quark_kg", "Milchpreis_NZ_Euro")
 
 # conditional installation of packages (if allready installed, just add package to search path)
-for (package in c("forecast", "ggplot2", "tidyr", "GGally", "tibble", "magrittr", "readxl", "visdat", "seastests", "ggcorrplot", "openxlsx", "glmnet")) {
+for (package in c("forecast", "ggplot2", "tidyr", "GGally", "tibble", "magrittr", "readxl", "visdat", "seastests", "ggcorrplot", "openxlsx", "glmnet", "lubridate")) {
   if(!do.call(require,list(package))) install.packages(package)
   do.call(library,list(package))
 }
@@ -45,6 +44,7 @@ data <- name_of_the_data |>
 data_ts <- ts(data, start = 2000, frequency = 12)
 
 # change the variable `TotMilch_Menge_inkl_LI` from monthly total to daily production
+# (this yields an annual cycle more representative for the actual milk production independent of monthly length)
 paste(floor(time(data_ts)),cycle(data_ts),"1",sep="-") |>
   as.Date() |>
   lubridate::days_in_month() -> days_in_month
