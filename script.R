@@ -84,7 +84,7 @@ data_ts |> as.data.frame() |> visdat::vis_miss() |> print()
 
 # correlation plot
 data_ts |> cor(use = "complete.obs") |> ggcorrplot::ggcorrplot(method = "circle", type = "lower", outline.color = par()$fg, lab_size = 2, lab = TRUE) |> print()
-write.table(x = cor(data_ts, use = "complete.obs"), file = file.path("output","correlations.csv"), sep = ";")
+openxlsx::write.xlsx(x = as.data.frame(cor(data_ts, use = "complete.obs")), file = file.path("output","correlations.xlsx"))
 
 # seasonal decomposition of the time series data
 for (i in 1:length(features)) {
