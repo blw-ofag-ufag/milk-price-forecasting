@@ -2,6 +2,7 @@
 title: Forecasting Swiss Milk Prices with Machine Learning
 format:
   gfm:
+    output-file: README.md
     link-citations: true
 bibliography: resources/references.bib
 ---
