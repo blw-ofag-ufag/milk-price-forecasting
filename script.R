@@ -103,7 +103,7 @@ for (i in 1:length(features)) {
 dev.off()
 
 # write all the results into one excel sheet
-list <- lapply(features, function(i) ts2df(data_ts[,i]))
+list <- lapply(features, function(i) data_ts[,i] |> ts2df() |> signif(digits = 5))
 names(list) <- features
 write.xlsx(list, file = file.path("output","decomposition.xlsx"))
 
@@ -143,9 +143,8 @@ df <- cbind(lag(data_ts[,target], k = 1:3),
 # replace all NA value by zero
 df[,features][is.na(df[,features])] <- 0
 
-# scale the data
-df <- scale(df)
-df[,"time"] <- df[,"time"]*sd(as.numeric(time(data_ts)))+mean(as.numeric(time(data_ts))) # keep time or
+# scale the data (IMPORTANT: apply the same normalization to y1, y2, and y3; otherwise re-scale is wrong!)
+df <- cbind((df[,1:3] - mean(data[,target]))/sd(data[,target]), time = df[,4], scale(df[,-c(1:4)]))
 
 # function to re-scale scaled values to the original size
 rescale <- function(z, mu = mean(data[,target]), sigma = sd(data[,target])) sigma*z + mu
@@ -160,7 +159,6 @@ foldid <- (df_train[,"time"] %/% 0.5 - 3999)
 # Save all features allowed to predict the model in one vector
 features <- c("sin","cos",month.name,features)
 label <- "y1"
-
 
 
 #===============================================================================================================
@@ -227,7 +225,7 @@ predictions_y3 <- cbind(predictions_y3, ARIMA = predictions_arima[,3], SARIMA = 
 
 # Combine all forecastings (with unseen observations to compare)
 t <- max(df[,"time"]) + c(1/12, 2/12, 3/12)
-forecastings <- rescale(rbind(tail(predictions_y1, 1), tail(predictions_y2, 1), tail(predictions_y3, 1)))
+forecastings <- rescale(rbind(t1 = tail(predictions_y1, 1), t2 = tail(predictions_y2, 1), t3 = tail(predictions_y3, 1)))
 write.xlsx(data.frame(Year = t%/%1, Month = t%%1*12+1, forecastings), file = file.path("output","predictions.xlsx"))
 
 
