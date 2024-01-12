@@ -41,6 +41,11 @@ data <- name_of_the_data |>
   readxl::read_excel() |>
   as.data.frame() |>
   subset(select = features)
+
+# export (or override) data as csv
+write.csv(data, file = "milk-price-data.csv", row.names = FALSE)
+
+# convert data frame to time series object
 data_ts <- ts(data, start = 2000, frequency = 12)
 
 # change the variable `TotMilch_Menge_inkl_LI` from monthly total to daily production
